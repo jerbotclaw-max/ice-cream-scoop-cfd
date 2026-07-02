@@ -1,0 +1,30 @@
+{
+  "designs": {
+    "A": {
+      "name": "Oil-filled Aluminum",
+      "final_head_temp_C": -7.38,
+      "steady_state_heat_flux_W": 11.142,
+      "times_to_target": {
+        "-15C": 39.0,
+        "-10C": 90.0,
+        "-5C": null,
+        "0C": null
+      }
+    },
+    "B": {
+      "name": "Solid Copper",
+      "final_head_temp_C": -9.41,
+      "steady_state_heat_flux_W": 12.975,
+      "times_to_target": {
+        "-15C": 42.0,
+        "-10C": 111.0,
+        "-5C": null,
+        "0C": null
+      }
+    }
+  },
+  "speedup_ratios": {
+    "-15C": 0.93,
+    "-10C": 0.81
+  }
+}
