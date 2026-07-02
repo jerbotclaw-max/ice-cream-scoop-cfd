@@ -1,30 +1,15 @@
 {
-  "designs": {
-    "A": {
-      "name": "Oil-filled Aluminum",
-      "final_head_temp_C": -7.38,
-      "steady_state_heat_flux_W": 11.142,
-      "times_to_target": {
-        "-15C": 39.0,
-        "-10C": 90.0,
-        "-5C": null,
-        "0C": null
-      }
-    },
-    "B": {
-      "name": "Solid Copper",
-      "final_head_temp_C": -9.41,
-      "steady_state_heat_flux_W": 12.975,
-      "times_to_target": {
-        "-15C": 42.0,
-        "-10C": 111.0,
-        "-5C": null,
-        "0C": null
-      }
-    }
+  "design_A_oil_filled_aluminum": {
+    "time_to_0C_s": 104.0,
+    "peak_flux_W": 100.24507998339674,
+    "final_temp_C": 2.1800250543856943,
+    "steady_state_flux_W": 3.5546515184234777
   },
-  "speedup_ratios": {
-    "-15C": 0.93,
-    "-10C": 0.81
-  }
+  "design_B_solid_copper": {
+    "time_to_0C_s": 29.0,
+    "peak_flux_W": 535.4059279880405,
+    "final_temp_C": 24.435580567143795,
+    "steady_state_flux_W": 5.244211179559561
+  },
+  "copper_speedup_ratio": 3.586206896551724
 }

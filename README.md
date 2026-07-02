@@ -1,113 +1,111 @@
-# Ice Cream Scoop Thermal CFD: Oil-Filled vs Solid Copper
+# 🍦 Ice Cream Scoop Thermal CFD Comparison
 
-**TL;DR: Oil-filled aluminum (Zeroll-style) warms the scoop head ~10-20% faster than solid copper, despite copper's 2x higher thermal conductivity. Copper's 3.3x greater volumetric heat capacity makes it slower to heat up.**
+Open-source thermal simulation comparing two ice cream scoop handle designs:
 
-This repo contains an open-source thermal simulation comparing two ice cream scoop handle designs:
+- **Design A:** Aluminum tube with mineral oil fill (heat-conductive fluid) — the classic Zeroll-style design
+- **Design B:** Solid copper handle — the theoretical optimum
 
-- **Design A**: Aluminum tube handle filled with mineral oil (Zeroll-style)
-- **Design B**: Solid copper handle
+## Why?
 
-## 📊 Key Results
+A [discussion](https://x.com/jerclaw) about identifying an unbranded ice cream scoop led to the question: *how much better would a solid copper scoop actually be?* This simulation answers that with real physics.
 
+## Methodology
+
+### Solver
+Quasi-1D transient thermal model using explicit finite-difference for axial conduction along the handle, with a lumped-capacitance model for the scoop head.
+
+### Heat equation (cylindrical coords, axial only):
 ```
-Metric                              Oil/Alum    Copper    Ratio
-──────────────────────────────────────────────────────────────
-Time to reach -15°C                 39.0s      42.0s    0.93x
-Time to reach -10°C                 90.0s     111.0s    0.81x
-Final head temp at 120s             -7.4°C     -9.4°C    —
-Steady-state heat flux              11.1W      13.0W      —
-```
-
-**Why does oil-filled aluminum win?** Despite aluminum having 2x lower thermal conductivity than copper (205 vs 401 W/m·K), the oil-filled design is lighter and has far less thermal mass to heat up. The mineral oil in the tube acts as a heat pipe, efficiently moving warmth from the hand toward the cold scoop head, while the thin aluminum tube wall minimizes cold-side thermal mass.
-
-## 🔬 Methodology
-
-### Physics
-
-The simulation solves transient heat conduction in cylindrical coordinates:
-
-```
-ρ·cp·∂T/∂t = ∇·(k∇T)
+∂T/∂t = α · ∂²T/∂z²
 ```
 
-Boundary conditions:
-- **Hand grip** (100mm section, z=60-160mm): Dirichlet T=33°C
-- **Ice cream contact** (scoop head face): Dirichlet T=-18°C
-- **Ambient surfaces**: Convection h=10 W/m²K, T=22°C
+Where `α = k_eff / (ρ · cp)` accounts for the composite cross-section (aluminum wall + oil core in parallel for Design A).
 
-Initial condition: entire scoop at -18°C (freezer storage).
+### Geometry
+| Parameter | Value |
+|-----------|-------|
+| Handle length | 150 mm |
+| Handle outer radius | 10 mm |
+| Handle inner radius (oil core) | 8 mm |
+| Scoop head radius | 25 mm |
+| Scoop head thickness | 4 mm |
+| Hand grip length | 95 mm |
 
-### Model
+### Material Properties
+| Material | k (W/m·K) | ρ (kg/m³) | cp (J/kg·K) |
+|----------|-----------|-----------|-------------|
+| Aluminum | 205 | 2700 | 900 |
+| Copper | 401 | 8960 | 385 |
+| Mineral oil (effective) | 2.0 | 850 | 2000 |
 
-A 1D axial thermal resistor-capacitor network with:
-- 60 axial segments
-- Per-segment thermal capacitance and axial/conduction conductances
-- Natural convection in the oil column modeled via Rayleigh number correlations
-- Implicit (backward Euler) time stepping for unconditional stability
+The oil effective conductivity of 2.0 W/m·K accounts for natural convection within the sealed tube (Rayleigh number analysis suggests Nu ≈ 3-5 for this geometry).
 
-See [src/materials.py](src/materials.py) for thermal properties.
+### Boundary Conditions
+- **Hand grip region:** Fixed at 33°C (palm temperature)
+- **Scoop head bottom:** Contact with ice cream at -18°C (convective, h=20 W/m²K)
+- **Exposed surfaces:** Ambient convection, h=10 W/m²K, T_amb=22°C
+- **Initial condition:** Entire scoop at -18°C (fresh from freezer)
 
-### Key Assumptions
+### Grid & Stability
+- 50 axial segments (dz = 3 mm)
+- dt = 10 ms (Fourier number < 0.4)
+- Simulated 120 seconds (12,000 steps)
 
-1. The scoop head is in continuous contact with ice cream at -18°C
-2. Hand maintains 33°C at the grip regardless of handle temperature
-3. No phase change in ice cream (latent heat neglected — conservative for warmup time)
-4. Oil natural convection uses the Petrone & Mendel correlation for enclosed vertical layers
+## Results
 
-## 📁 Repo Structure
+### Key Findings
 
-```
-ice-cream-scoop-cfd/
-├── src/
-│   ├── materials.py       # Thermal properties (k, ρ, cp, oil correlation)
-│   ├── solver_lumped.py   # Main solver: 1D thermal network + plots
-│   ├── solver_v3.py       # 2D axisymmetric FDM solver (reference)
-│   └── solver_vec.py      # Vectorized 2D solver (reference)
-├── results/
-│   ├── comparison_timeseries.png
-│   ├── time_to_target.png
-│   ├── axial_profile.png
-│   ├── design_A_timeseries.npz
-│   ├── design_B_timeseries.npz
-│   └── summary.json
-├── docs/
-│   └── notes.md
-├── requirements.txt
-└── README.md
-```
+| Metric | Design A (Oil-filled Al) | Design B (Solid Cu) | Ratio |
+|--------|--------------------------|---------------------|-------|
+| **Time to 0°C** | ~104 s | ~29 s | **3.6× faster** |
+| **Peak heat flux** | ~100 W | ~535 W | 5.3× |
+| **Steady-state flux** | ~3.5 W | ~5.2 W | 1.5× |
+| **Temp at 120s** | 2.2°C | 24.4°C | — |
 
-## 🚀 Run It
+### Temperature Evolution
+![Head Temperature vs Time](results/head_temp_vs_time.png)
+
+### Heat Flux from Hand
+![Heat Flux vs Time](results/heat_flux_vs_time.png)
+
+### Handle Temperature Profiles
+
+**Design A (Aluminum + Oil):**
+![Design A Profile](results/handle_profile_design_A.png)
+
+**Design B (Solid Copper):**
+![Design B Profile](results/handle_profile_design_B.png)
+
+## Interpretation
+
+Copper conducts heat **3.6× faster** to the scoop head, reaching 0°C in under 30 seconds vs 104 seconds for the oil-filled design. The copper scoop continues warming well past 0°C, reaching ~24°C after 2 minutes.
+
+However, copper has significant practical disadvantages:
+- **Weight:** ~70g head vs ~21g (aluminum) — feels like a hammer
+- **Cost:** Copper is expensive (~$15-20 in material alone)
+- **Food safety:** Copper requires a food-safe coating (tin or stainless lining)
+- **Corrosion:** Copper tarnishes and reacts with acidic foods
+
+The oil-filled aluminum design is "good enough" — it reaches 0°C in ~104 seconds, which is adequate for scooping. The liquid-filled design wins on cost, weight, and food safety.
+
+## Files
+
+- `scoop_thermal_solver.py` — The solver (Python/NumPy)
+- `results/` — Output data and plots
+  - `head_temp_vs_time.png` — Main comparison plot
+  - `heat_flux_vs_time.png` — Heat transfer comparison
+  - `handle_profile_design_{A,B}.png` — Handle temperature profiles over time
+  - `summary.json` — Machine-readable results
+  - `*.npy` — Raw time-series data
+
+## Reproducing
 
 ```bash
-pip install numpy matplotlib
-cd src
-python solver_lumped.py
+python3 scoop_thermal_solver.py
 ```
 
-Results go to `../results/`.
+Requires: Python 3, NumPy, Matplotlib
 
-## 🔧 Hardware
+## License
 
-The simulation runs on CPU in <1 second. For GPU-accelerated 3D CFD, see `src/solver_v3.py` (requires PyTorch + CUDA).
-
-Ray's Windows machine (`vision`, 100.71.215.1) has a 4090 — potential target for full 3D GPU simulation.
-
-## 📝 Design Implications
-
-| Feature | Oil-Filled Aluminum | Solid Copper |
-|---------|---------------------|--------------|
-| Warmup speed | ✅ Faster | ❌ Slower (more mass) |
-| Steady-state heat flux | 11W | 13W (+18%) |
-| Weight | Light (~50g) | Heavy (~180g) |
-| Cost | $20-30 | $60-100+ |
-| Feel | Warm handle | Warm handle |
-
-**The Zeroll design is thermally optimal for hand-to-scoop heat transfer given the constraint of needing the handle to feel warm without burning the user.**
-
-## 📜 License
-
-MIT — use freely, build a better scoop.
-
-## 🧊 The Scoop Mystery
-
-This project started as a quest to identify an unmarked "CAUTION DO NOT BOIL" ice cream scoop. It turned out to be a generic Zeroll-style oil-filled aluminum scoop, likely purchased at TJ Maxx. The physics makes the Zeroll design elegant: maximum heat transfer path from hand to ice cream with minimum thermal mass.
+MIT — use this to build a better scoop. If you do, send us one.
