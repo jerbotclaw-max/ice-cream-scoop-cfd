@@ -5,6 +5,11 @@ Open-source thermal simulation comparing two ice cream scoop handle designs:
 - **Design A:** Aluminum tube with mineral oil fill (heat-conductive fluid) — the classic Zeroll-style design
 - **Design B:** Solid copper handle — the theoretical optimum
 
+The repository now also includes a first-bite engineering screen for eating
+hard-packed ice cream directly from a pint. It compares ordinary stainless,
+a titanium spork, copper-core, CVD-diamond-film, and low-temperature heat-pipe
+architectures. See [`docs/FIRST_BITE.md`](docs/FIRST_BITE.md).
+
 ## Why?
 
 A [discussion](https://x.com/jerclaw) about identifying an unbranded ice cream scoop led to the question: *how much better would a solid copper scoop actually be?* This simulation answers that with real physics.
@@ -91,6 +96,8 @@ The oil-filled aluminum design is "good enough" — it reaches 0°C in ~104 seco
 ## Files
 
 - `scoop_thermal_solver.py` — The solver (Python/NumPy)
+- `first_bite_model.py` — mechanical-edge + hand-to-tip thermal architecture screen
+- `docs/FIRST_BITE.md` — design verdict, CVD diamond and heat-pipe analysis
 - `results/` — Output data and plots
   - `head_temp_vs_time.png` — Main comparison plot
   - `heat_flux_vs_time.png` — Heat transfer comparison
