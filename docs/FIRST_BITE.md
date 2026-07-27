@@ -86,6 +86,22 @@ The next honest step is a force-gauge bench test at -18°C. Compare an ordinary
 teaspoon, Snow Peak spork, thick aluminum ice-cream spoon, solid-copper spoon,
 and a copper-spine prototype at 0, 10, and 30 seconds of hand warming.
 
+## Published 15.0% temperature test
+
+15.0% publishes a five-minute hand-warming comparison performed with the
+Toyama Prefectural Industrial Technology Center. The standard solid-aluminum
+15.0% spoon's handle rose 5.6°C and its tip rose 5.2°C; the conventional
+stainless spoon's handle rose 2.5°C and its tip rose 0°C. This supports the
+cross-section/geometry argument: a thick, uncoated solid body can outperform a
+thin or poorly coupled utensil even when a competitor uses a nominally more
+conductive metal.
+
+It does **not** close the First Bite validation gap. The test starts near room
+temperature, lasts five minutes, and reports temperatures rather than insertion
+force against -18°C ice cream. The separate No.21 product uses solid copper;
+its product page should not be presented as the specimen from the aluminum
+performance test.
+
 ## Sources
 
 - Snow Peak Titanium Spork:
